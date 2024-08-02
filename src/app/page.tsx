@@ -20,16 +20,6 @@ export default function Home() {
 
   const [moodProfile, setMoodProfile] = useState("");
 
-  // const getAccessToken = async () => {
-  //   try {
-  //     const response = await axios.get("/api/get-token");
-  //     console.log(response);
-  //     localStorage.setItem("__token__", response.data.access_token);
-  //   } catch (error) {
-  //     console.error("Error getting token:", error);
-  //   }
-  // };
-
   const getResult = async () => {
     setIsFetching(true);
     const playlistLinkJson = JSON.stringify(playlistLink);

@@ -6,10 +6,11 @@ import {
   getTrackFeatures,
 } from "@/app/utils/helper";
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 import { NextResponse } from "next/server";
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 const model = genAI.getGenerativeModel({
   model: process.env.GEMINI_MODEL,
   safetySettings,
