@@ -45,7 +45,7 @@ export default function Home() {
     }, 4000);
   }
   return (
-    <main className="bg-[#31363F] h-screen flex flex-col justify-between items-center">
+    <main className="bg-[#151515] h-screen flex flex-col justify-between items-center">
       <div className="pt-4">
         <h5 className="text-3xl font-semibold text-center">Playlist Persona</h5>
       </div>
@@ -62,7 +62,7 @@ export default function Home() {
           onClick={getResult}
           type="button"
           disabled={!playlistLink}
-          className="w-full mt-2 rounded-md border bg-[#31363F] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#2f333b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          className="w-full mt-2 rounded-md border bg-[#373A40] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#2f333b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           {isFetching ? (
             <div className="flex justify-center gap-2">
