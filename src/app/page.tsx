@@ -5,13 +5,10 @@ import { useState } from "react";
 import Loading from "./component/Loader";
 import Image from "next/image";
 import xlogo from "../../public/x-logo.png";
-import Link from "next/link";
 import Card from "./component/Card";
 import ErrorAlert from "./component/ErrorAlert";
 
 export default function Home() {
-  console.log("Whatsupp!")
-
   const [isFetching, setIsFetching] = useState(false);
   const [playlistLink, setPlaylistLink] = useState("");
 
