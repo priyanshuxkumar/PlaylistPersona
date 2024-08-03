@@ -55,7 +55,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json(parsedData);
     } catch (error:any) {
-      return NextResponse.json({ error: error.message },{ status: 500 });
+      return NextResponse.json({ error: error.message },{ status: error.response.status });
     }
   } else {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });

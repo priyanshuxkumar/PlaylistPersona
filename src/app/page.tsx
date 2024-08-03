@@ -7,6 +7,7 @@ import Image from "next/image";
 import xlogo from "../../public/x-logo.png";
 import Card from "./component/Card";
 import ErrorAlert from "./component/ErrorAlert";
+import Blocked from "./component/Blocked";
 
 export default function Home() {
   const [isFetching, setIsFetching] = useState(false);
@@ -14,6 +15,9 @@ export default function Home() {
 
   //Error Handling
   const [error, setError] = useState("");
+
+  //Rate Limit
+  const [isRateLimited, setIsRateLimited] = useState(false);
 
   const [moodProfile, setMoodProfile] = useState("");
 
@@ -26,10 +30,18 @@ export default function Home() {
         setMoodProfile(response.data);
         setPlaylistLink('');
       }
+      if(response.status == 429){
+        setIsRateLimited(true);
+        setError("Too many requests. Please wait and try again later.");
+      }
       setIsFetching(false);
     } catch (error: any) {
-      console.log(error);
-      setError(error.response.data.error);
+      if (error.response && error.response.status === 429) {
+        setIsRateLimited(true);
+        setError("Too many requests. Please wait and try again later.");
+      }else{
+        setError(error.response.data.error);
+      }
     } finally {
       setIsFetching(false);
     }
@@ -40,6 +52,12 @@ export default function Home() {
     setTimeout(() => {
       setError("");
     }, 4000);
+  }
+
+  if(isRateLimited == true){
+    setTimeout(() => {
+      setIsRateLimited(false);
+    }, 10000);
   }
   return (
     <main className="bg-[#151515] h-screen flex flex-col justify-between items-center">
@@ -100,6 +118,13 @@ export default function Home() {
           <ErrorAlert error={error} />
         </div>
       )}
+
+      {
+        isRateLimited && 
+        <div className="w-screen h-screen pt-10 backdrop-blur-md absolute top-0 left-0 ">
+          <Blocked/>
+        </div>
+      }
     </main>
   );
 }
