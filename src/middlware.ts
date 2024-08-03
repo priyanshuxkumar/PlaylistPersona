@@ -4,19 +4,17 @@ import { kv } from "@vercel/kv";
 
 const ratelimit = new Ratelimit({
   redis: kv,
-  // 5 requests from the same IP in 10 seconds
   limiter: Ratelimit.slidingWindow(5, '10s'),
 });
 
 // Define which routes you want to rate limit
 export const config = {
-  runtime: 'edge',
+  matcher: '/api/:path*',
 };
 
 export default async function handler(request: NextRequest) {
   const ip = request.ip ?? "127.0.0.1";
-  console.log(`Rate limit check for IP: ${ip}`);
-
+ 
   const { success } = await ratelimit.limit(
     ip
   );

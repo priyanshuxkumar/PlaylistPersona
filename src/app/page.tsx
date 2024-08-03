@@ -58,7 +58,7 @@ export default function Home() {
         <button
           onClick={getResult}
           type="button"
-          disabled={!playlistLink}
+          disabled={!playlistLink || isFetching}
           className="w-full mt-2 rounded-md border bg-[#373A40] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#2f333b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           {isFetching ? (

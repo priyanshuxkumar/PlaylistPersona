@@ -40,7 +40,6 @@ async function getAccessToken() {
 
     return accessToken;
   } catch (error) {
-    console.log("error occured", error);
     return NextResponse.json(
       { error: "Failed to fetch Spotify token" },
       { status: 500 }
@@ -66,7 +65,6 @@ async function getPlaylistDetails(token: string, playlistLink: string) {
 
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch playlist", error);
     throw new Error("Failed to fetch playlist details");
   }
 }
@@ -85,7 +83,6 @@ async function getTrackFeatures(trackIds: any, token: string) {
 
     return response.data.audio_features;
   } catch (error) {
-    console.error("Error occurred while fetching track features", error);
     throw new Error("Failed to fetch track features");
   }
 }

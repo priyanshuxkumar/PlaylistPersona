@@ -54,12 +54,8 @@ export async function POST(req: Request) {
       const parsedData = JSON.parse(jsonString);
 
       return NextResponse.json(parsedData);
-    } catch (error) {
-      console.log("Internal server error", error);
-      return NextResponse.json(
-        { error: "Internal server error" },
-        { status: 500 }
-      );
+    } catch (error:any) {
+      return NextResponse.json({ error: error.message },{ status: 500 });
     }
   } else {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
@@ -75,7 +71,7 @@ async function getMoodResponse(moodProfile: any) {
   Based on the music selection, craft a detailed personality profile of the playlist owner. Describe their potential personality traits, interests, and lifestyle in a concise and engaging manner. 
 
   Format your response as a JSON object with two keys:
-  * **mood**: A funny title you can give you a person. (add emoji according to playlist emotion)
+  * **mood**: A title about person personality. (add emoji according to playlist emotion)
   * **description**: A detailed personality profile of the playlist owner.(Start like this : "You are a... Include a touch of naughtiness if the playlist features old sad songs, suggesting they might be in love or heartbreak or nostalgic.") 
  
   Keep the personality description under 30 words. `;
