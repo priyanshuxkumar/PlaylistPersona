@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 import qs from "qs";
+import { ApiError } from "./ApiError";
 
 
 let tokenCache:any = null;
@@ -50,7 +51,7 @@ async function getAccessToken() {
 async function getPlaylistDetails(token: string, playlistLink: string) {
   const playlistIdMatch = playlistLink.match(/playlist\/([^?]+)/);
   if (!playlistIdMatch) {
-    throw new Error("Invalid playlist URL");
+    throw new ApiError("Invalid playlist URL" , 400);
   }
 
   const playlistId = playlistIdMatch[1];
@@ -62,10 +63,12 @@ async function getPlaylistDetails(token: string, playlistLink: string) {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    if(!response){
+      throw new ApiError("Playlist not found" , 404);
+    }
     return response.data;
   } catch (error) {
-    throw new Error("Failed to fetch playlist details");
+    throw new ApiError("Failed to fetch playlist details" , 500);
   }
 }
 

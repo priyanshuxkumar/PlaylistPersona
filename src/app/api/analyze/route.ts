@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
       if (!playlistLink) {
         throw new Error("Please enter a valid Link");
-      }
+      };
 
       //Get Token
       const token = await getAccessToken();
@@ -33,12 +33,12 @@ export async function POST(req: Request) {
 
       if (!playlistDetail) {
         throw new Error("Failed to fetch playlist");
-      }
+      };
 
       //Fetch Track Id's
       const trackIds = playlistDetail && playlistDetail?.tracks?.items.map(
           (item: { track: { id: string } }) => item.track.id
-        );
+      );
 
       //Get Track Feature
       const trackFeatures = await getTrackFeatures(trackIds, token);
@@ -53,9 +53,9 @@ export async function POST(req: Request) {
       const jsonString = responseData.match(/```json\n([\s\S]*?)\n```/)[1];
       const parsedData = JSON.parse(jsonString);
 
-      return NextResponse.json(parsedData);
+      return NextResponse.json({ data: parsedData }, { status: 200 });
     } catch (error:any) {
-      return NextResponse.json({ error: error.message },{ status: error.response.status });
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
     }
   } else {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });

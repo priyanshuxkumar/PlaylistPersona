@@ -1,33 +1,63 @@
 "use client";
 
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "./component/Loader";
 import Image from "next/image";
 import xlogo from "../../public/x-logo.png";
 import Card from "./component/Card";
 import ErrorAlert from "./component/ErrorAlert";
+import { CircleX } from 'lucide-react';
 import Blocked from "./component/Blocked";
 
 export default function Home() {
-  const [isFetching, setIsFetching] = useState(false);
-  const [playlistLink, setPlaylistLink] = useState("");
+  // Regex for validating Spotify playlist URL
+  const spotifyPlaylistUrlRegex = /^https:\/\/open\.spotify\.com\/playlist\/[a-zA-Z0-9]{22}/;
+
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [playlistLink, setPlaylistLink] = useState<string>("");
 
   //Error Handling
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
   //Rate Limit
-  const [isRateLimited, setIsRateLimited] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState<boolean>(false);
 
-  const [moodProfile, setMoodProfile] = useState("");
+  const [moodProfile, setMoodProfile] = useState<string>("");
 
+  const [isPlaylistUrlInValid , setIsPlaylistUrlInValid] = useState<boolean>(false);
+
+  //Disappear error and Rate Limited UI
+  useEffect(() => {
+    let errorTimeout: NodeJS.Timeout;
+    let rateLimitTimeout: NodeJS.Timeout;
+
+    if (error) {
+      errorTimeout = setTimeout(() => {
+        setError('');
+      }, 4000);
+    }
+
+    if (isRateLimited) {
+      rateLimitTimeout = setTimeout(() => {
+        setIsRateLimited(false);
+      }, 10000);
+    }
+
+    return () => {
+      if (errorTimeout) clearTimeout(errorTimeout);
+      if (rateLimitTimeout) clearTimeout(rateLimitTimeout);
+    };
+  }, [error, isRateLimited]);
+
+  //Api call 
   const getResult = async () => {
     setIsFetching(true);
     const playlistLinkJson = JSON.stringify(playlistLink);
     try {
       const response = await axios.post("/api/analyze", playlistLinkJson);
       if (response.status == 200) {
-        setMoodProfile(response.data);
+        setMoodProfile(response.data.data);
         setPlaylistLink('');
       }
       if(response.status == 429){
@@ -47,44 +77,59 @@ export default function Home() {
     }
   };
 
-  //Disappear error
-  if (error != "") {
-    setTimeout(() => {
-      setError("");
-    }, 4000);
-  }
+  //Input On change
+  const inputOnChange = (e:  React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setPlaylistLink(value);
 
-  if(isRateLimited == true){
-    setTimeout(() => {
-      setIsRateLimited(false);
-    }, 10000);
-  }
+    // Checking if Playlist Link is Valid
+    if (value && !spotifyPlaylistUrlRegex.test(value)) {
+      setIsPlaylistUrlInValid(true);
+    }else{
+      setIsPlaylistUrlInValid(false);
+    }
+  };
+  
   return (
-    <main className="bg-[#151515] h-screen flex flex-col justify-between items-center">
+    <main className="bg-white h-screen max-h-screen flex flex-col justify-between items-center">
       <div className="pt-4">
-        <h5 className="text-3xl font-semibold text-center">Playlist Persona</h5>
+        <h5 className="text-3xl text-black font-semibold text-center">Playlist Persona</h5>
       </div>
 
       <div className="w-11/12 lg:w-1/3">
+
+      <div className="border h-10 text-black border-black/50 rounded-md flex items-center">
         <input
-          onChange={(e) => setPlaylistLink(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-white bg-transparent px-3 py-2 text-sm placeholder:text-white/60 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+          onChange={inputOnChange}
+          className="flex h-10 w-full rounded-md text-black bg-transparent px-3 py-2 text-sm placeholder:text-black/60 focus:outline-none  disabled:cursor-not-allowed disabled:opacity-50"
           type="text"
           value={playlistLink}
           placeholder="Drop spotify playlist link"
         ></input>
+
+        {isPlaylistUrlInValid && <span className="px-1"><CircleX strokeWidth={1.5} color="red"/></span>}
+
+        <button
+          type="button"
+          onClick={() => navigator.clipboard.readText().then(text => setPlaylistLink(text))}
+          className="h-10 px-2 rounded-md text-sm text-black">
+          Paste
+        </button>
+        </div>
+
+
         <button
           onClick={getResult}
           type="button"
           disabled={!playlistLink || isFetching}
-          className="w-full mt-2 rounded-md border bg-[#373A40] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#2f333b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          className="w-full h-10 mt-2 rounded-md border border-black/50 bg-slate-50 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           {isFetching ? (
             <div className="flex justify-center gap-2">
-              <Loading size={20} width={2} /> Please wait
+              <Loading size={20} width={2} /> Analyzing your playlist...
             </div>
           ) : (
-            "Get result!"
+            "Show Me!"
           )}
         </button>
 
@@ -96,7 +141,7 @@ export default function Home() {
       </div>
 
       <div className="pb-3 flex items-center gap-2">
-        <h5 className="text-sm text-center">
+        <h5 className="text-sm text-center text-slate-800">
           Made by <span className="font-semibold">Priyanshu Kumar</span>
         </h5>{" "}
         <div>
