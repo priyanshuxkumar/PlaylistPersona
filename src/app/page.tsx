@@ -89,7 +89,6 @@ export default function Home() {
       setIsPlaylistUrlInValid(false);
     }
   };
-  
   return (
     <main className="bg-white h-screen max-h-screen flex flex-col justify-between items-center">
       <div className="pt-4">
@@ -121,7 +120,7 @@ export default function Home() {
         <button
           onClick={getResult}
           type="button"
-          disabled={!playlistLink || isFetching}
+          disabled={!playlistLink || isFetching || isPlaylistUrlInValid}
           className="w-full h-10 mt-2 rounded-md border border-black/50 bg-slate-50 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           {isFetching ? (
