@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
       //Get Playlist Details
       const playlistDetail = await getPlaylistDetails(token, playlistLink);
-
+     
       if (!playlistDetail) {
         throw new Error("Failed to fetch playlist");
       };
@@ -42,7 +42,6 @@ export async function POST(req: Request) {
 
       //Get Track Feature
       const trackFeatures = await getTrackFeatures(trackIds, token);
-
       //Anaylyze Mood
       const moodProfile = analyzeMood(trackFeatures);
 
@@ -70,14 +69,14 @@ async function getMoodResponse(moodProfile: any) {
 
   Based on the music selection, craft a detailed personality profile of the playlist owner. Describe their potential personality traits, interests, and lifestyle in a concise and engaging manner. 
 
-  Format your response as a JSON object with two keys:
+  Format your response as a JSON object with three keys:
   * **mood**: A title about person personality. (add emoji according to playlist emotion)
   * **description**: A detailed personality profile of the playlist owner.(Start like this : "You are a... Include a touch of naughtiness if the playlist features old sad songs, suggesting they might be in love or heartbreak or nostalgic.") 
+  * **suggestions**: Suggest three songs that would fit well with the playlist. The suggestions can be both in Hindi and English songs.
  
-  Keep the personality description under 30 words. `;
+  Keep the personality description under 30 words.`;
 
   const result = await model.generateContent(prompt);
   const response = await result.response.text();
-
   return response;
 }

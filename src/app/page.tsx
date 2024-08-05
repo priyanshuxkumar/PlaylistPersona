@@ -9,6 +9,8 @@ import Card from "./component/Card";
 import ErrorAlert from "./component/ErrorAlert";
 import { CircleX } from 'lucide-react';
 import Blocked from "./component/Blocked";
+import MusicCard from "./component/MusicCard";
+import { it } from "node:test";
 
 export default function Home() {
   // Regex for validating Spotify playlist URL
@@ -26,6 +28,9 @@ export default function Home() {
   const [moodProfile, setMoodProfile] = useState<string>("");
 
   const [isPlaylistUrlInValid , setIsPlaylistUrlInValid] = useState<boolean>(false);
+
+  //Suggestions Songs
+  const [suggestedSongs , setSuggestedSongs] = useState([]);
 
   //Disappear error and Rate Limited UI
   useEffect(() => {
@@ -58,6 +63,7 @@ export default function Home() {
       const response = await axios.post("/api/analyze", playlistLinkJson);
       if (response.status == 200) {
         setMoodProfile(response.data.data);
+        setSuggestedSongs(response.data.data.suggestions)
         setPlaylistLink('');
       }
       if(response.status == 429){
@@ -137,6 +143,13 @@ export default function Home() {
             <Card data={moodProfile} />
           </div>
         )}
+
+        {/* Songs Suggestions card  */}
+        {suggestedSongs &&
+        <div className="flex gap-2 mt-2">
+          {suggestedSongs.map((item , index)=> <MusicCard key={index} title={item}/>)}
+        </div>
+        }
       </div>
 
       <div className="pb-3 flex items-center gap-2">
